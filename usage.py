@@ -2,12 +2,11 @@ from collections import Counter
 import re
 
 import dash_d3cloud
-import dash
-from dash import html, dcc, Input, Output
+from dash import Dash, html, dcc, Input, Output
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+app = Dash(__name__, external_stylesheets=external_stylesheets)
 
 
 def prepare_input(text_data):
@@ -109,10 +108,13 @@ def display_output(count, custom_input, choice, spiral, scale, n_rotations, rota
 
 @app.callback(
     Output("selected-word", "children"),
-    Input("wordcloud", "value")
+    Input("wordcloud", "clickedWord")
 )
 def f(word):
-    return word
+    if word:
+        return f"word: {word['text']} - value: {word['value']}"
+    else: 
+        return "No word clicked"
 
 
 if __name__ == '__main__':
