@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ReactWordcloud from 'react-wordcloud';
 
-
+import { omit } from 'ramda';
+/**
+ * WordCloud component
+ */
 export default class WordCloud extends Component {
 
     constructor(props) {
@@ -11,16 +14,23 @@ export default class WordCloud extends Component {
 
     componentWillMount() {
         this.wordCloud = React.createFactory(ReactWordcloud);
-        this.props.callbacks = { onWordClick: (word) => setProps({ "value": word }) }
     }
 
     render() {
-        return this.wordCloud(this.props)
+        const { setProps } = this.props;
+        const newProps = Object.assign(
+            {
+                callbacks: { 
+                    onWordClick: (word) => setProps({ clickedWord: word}) 
+                }
+            },
+            omit(["setProps", "clickedWord"], this.props)
+        )
+        return this.wordCloud(newProps)
     }
 }
 
 WordCloud.defaultProps = {
-    id: 'wc',
     options: {
         colors: ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b'],
         enableTooltip: true,
@@ -44,13 +54,30 @@ WordCloud.propTypes = {
     // that you want to make accessible to your component
     // I recommend including _all_ of the properties of draggable
     // that are JSON serializable (i.e. everything but functions)
-    id: PropTypes.string.isRequired,
+
+    /**
+     * Component id
+     */
+    id: PropTypes.string,
+
+    /**
+     * Set props (used internally)
+     */
+    setProps: PropTypes.func,
+
+    /**
+     * List of words
+     */
     words: PropTypes.arrayOf(
         PropTypes.shape({
             text: PropTypes.string.isRequired,
             value: PropTypes.number.isRequired,
         })
     ).isRequired,
+
+    /**
+     * Options
+     */
     options: PropTypes.shape({
         fontStyle: PropTypes.string,
         fontSizes: PropTypes.arrayOf(PropTypes.number),
@@ -66,5 +93,9 @@ WordCloud.propTypes = {
         spiral: PropTypes.string,
         transitionDuration: PropTypes.number
     }),
-    value: PropTypes.string
-}
+
+    /**
+     * Selected word on click (read-only)
+     */
+    clickedWord: PropTypes.object,
+};

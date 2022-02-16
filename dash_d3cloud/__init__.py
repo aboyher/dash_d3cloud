@@ -31,9 +31,7 @@ _this_module = _sys.modules[__name__]
 
 _js_dist = [
     {
-        'relative_package_path': 'dash_d3cloud.min.js',
-        'dev_package_path': 'dash_d3cloud.dev.js',
-        
+        'relative_package_path': 'dash_d3cloud.min.js',        
         'namespace': package_name
     }
 ]
